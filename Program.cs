@@ -8,7 +8,7 @@ Console.WriteLine($"Cajero a cargo: {cajeroName}");
 Console.WriteLine($"Bienvenido, {cajeroName}, caja abierta");
 
 int choice;
-decimal totalVenta = 0;
+decimal totalSell = 0;
 int productCant = 0;
 const decimal discount_10 = 0.10m;
 const decimal discount_5 = 0.05m;
@@ -17,11 +17,15 @@ const decimal surcharge_credit = 0.15m;
 
 do
 {
-    Console.WriteLine("\nQue desea hacer?");
-    Console.WriteLine("1- Cargar un poducto");
-    Console.WriteLine("2- Cerrar la venta");
-    Console.WriteLine("Eleccion 1 o 2: ");
-    choice = int.Parse(Console.ReadLine());
+        Console.WriteLine("\nQue desea hacer?");
+        Console.WriteLine("1- Cargar un poducto");
+        Console.WriteLine("2- Cerrar la venta");
+        Console.WriteLine("Eleccion 1 o 2: ");
+   
+    while (!int.TryParse(Console.ReadLine(), out choice) || (choice != 1 && choice != 2))
+    {
+        Console.Write("Error. Opción inválida. Por favor, ingrese 1 o 2: ");
+    }
 
     switch (choice)
     {
@@ -32,42 +36,28 @@ do
             decimal productPrice = decimal.Parse(Console.ReadLine());
 
             Console.WriteLine($"Su producto es {productName} y su precio ${productPrice}");
-            totalVenta += productPrice;
+            totalSell += productPrice;
             productCant++;
             break;
 
         case 2:
-            Console.WriteLine($"Cantidad de productos: {productCant}");
-           
-            decimal montoConDescuento = totalVenta;
-            decimal descuentoMontoAplicado = 0;
 
-            if (totalVenta > 50000)
+            decimal discountAmountApplied = 0;
+
+            if (totalSell > 50000)
             {
-                Console.WriteLine($"Subtotal: {totalVenta}");
-                descuentoMontoAplicado = totalVenta * discount_10;
-                Console.WriteLine($"Descuento aplicado(10%): {descuentoMontoAplicado}");
-                montoConDescuento = totalVenta - descuentoMontoAplicado;
-                Console.WriteLine($"Monto a pagar: {montoConDescuento}");
+                discountAmountApplied = totalSell * discount_10;
             }
-            else if (totalVenta > 20000)
+            else if (totalSell > 20000)
             {
-                Console.WriteLine($"Subtotal: {totalVenta}");
-                descuentoMontoAplicado = totalVenta * discount_5;
-                Console.WriteLine($"Descuento aplicado(5%): {descuentoMontoAplicado}");
-                montoConDescuento = totalVenta - descuentoMontoAplicado;
-                Console.WriteLine($"Monto a pagar: {montoConDescuento}");
+                discountAmountApplied = totalSell * discount_5;
             }
-            else
-            {
-                Console.WriteLine($"Subtotal: {totalVenta}");
-                Console.WriteLine($"Descuento aplicado: 0");
-                Console.WriteLine($"Monto a pagar: {montoConDescuento}");
-            }
+
+            decimal discountedAmount = totalSell - discountAmountApplied;
 
             int payment;
             decimal paymentDiscount = 0;
-            decimal finalCost = 0;
+            decimal paymentSurcharge = 0;
 
             do
             {
@@ -81,36 +71,50 @@ do
                 switch (payment)
                 {
                     case 1:
-                        Console.WriteLine("\nLa venta ha sido cerrada, cantidades y precio final: ");
-                        Console.WriteLine($"Subtotal: {montoConDescuento}");
-                        paymentDiscount = montoConDescuento * discount_cash;
-                        Console.WriteLine($"Descuento aplicado(10%): {paymentDiscount}");
-                        finalCost = montoConDescuento - paymentDiscount;
-                        Console.WriteLine($"Monto a pagar: {finalCost}");
+                        paymentDiscount = discountedAmount * discount_cash;
                         break;
 
                     case 2:
-                        Console.WriteLine("\nLa venta ha sido cerrada, cantidades y precio final: ");
-                        Console.WriteLine($"Monto a pagar: {montoConDescuento}");
                         break;
 
                     case 3:
-                        Console.WriteLine("\nLa venta ha sido cerrada, cantidades y precio final: ");
-                        Console.WriteLine($"Subtotal: {montoConDescuento}");
-                        paymentDiscount = montoConDescuento * surcharge_credit;
-                        Console.WriteLine($"Recargo(15%): {paymentDiscount}");
-                        finalCost = montoConDescuento + paymentDiscount;
-                        Console.WriteLine($"Monto a pagar: {finalCost}");
+                        paymentSurcharge = discountedAmount * surcharge_credit;
                         break;
+
                     default:
                         Console.WriteLine("Opción de pago inválida. Intente de nuevo.");
                         break;
                 }
             } while (payment < 1 || payment > 3);
+
+            decimal totalDisccount = discountAmountApplied + paymentDiscount;
+            decimal totalRecharge = paymentSurcharge;
+            decimal finalCost = totalSell - totalDisccount + totalRecharge;
+
+            Console.WriteLine();
+            for (int i = 0; i < 35; i++) Console.Write("-");
+            Console.WriteLine();
+
+            Console.WriteLine($"         {kioscoName}");
+
+            for (int i = 0; i < 35; i++) Console.Write("-");
+            Console.WriteLine();
+
+            Console.WriteLine($"Cajero: {cajeroName}");
+            Console.WriteLine($"Productos: {productCant}");
+            Console.WriteLine($"Subtotal: {totalSell}");
+            Console.WriteLine($"Descuento: {totalDisccount}");
+            Console.WriteLine($"Recargo: {totalRecharge}");
+
+            for (int i = 0; i < 35; i++) Console.Write("-");
+            Console.WriteLine();
+
+            Console.WriteLine($"TOTAL: {finalCost}");
+
+            for (int i = 0; i < 35; i++) Console.Write("-");
             break;
-        default:
-            Console.WriteLine("Opción inválida. Intente nuevamente.");
-            break;
+
+
     }
 } while (choice != 2);
 Console.ReadKey();
