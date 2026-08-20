@@ -10,6 +10,8 @@ Console.WriteLine($"Bienvenido, {cajeroName}, caja abierta");
 int choice;
 decimal totalVenta = 0;
 int productCant = 0;
+const decimal discount_10 = 0.10m;
+const decimal discount_5 = 0.05m;
 
 do
 {
@@ -35,10 +37,28 @@ do
         case 2:
             Console.WriteLine("\nLa venta ha sido cerrada, cantidades y precio final: ");
             Console.WriteLine($"Cantidad de productos: {productCant}");
-            Console.WriteLine($"Monto total: {totalVenta}");
+            if (totalVenta > 50000)
+            {
+                Console.WriteLine($"Subtotal: {totalVenta}");
+                Console.WriteLine($"Descuento aplicado(10%): {totalVenta * discount_10}");
+                Console.WriteLine($"Monto a pagar: {totalVenta - totalVenta * discount_10}");
+            }
+            else if (totalVenta > 20000)
+            {
+                Console.WriteLine($"Subtotal: {totalVenta}");
+                Console.WriteLine($"Descuento aplicado(5%): {totalVenta * discount_5}");
+                Console.WriteLine($"Monto a pagar: {totalVenta - totalVenta * discount_5}");
+            }
+            else
+            {
+                Console.WriteLine($"Subtotal: {totalVenta}");
+                Console.WriteLine($"Descuento aplicado: 0");
+                Console.WriteLine($"Monto a pagar: {totalVenta}");
+            }
             break;
         default:
             Console.WriteLine("Opción inválida. Intente nuevamente.");
             break;
     }
 } while (choice != 2);
+Console.ReadKey();
